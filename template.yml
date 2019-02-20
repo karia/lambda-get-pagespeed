@@ -1,0 +1,14 @@
+﻿AWSTemplateFormatVersion: '2010-09-09'
+Transform: 'AWS::Serverless-2016-10-31'
+Description: An AWS Serverless Specification template describing your function.
+Resources:
+  crawl:
+    Type: 'AWS::Serverless::Function'
+    Properties:
+      Handler: index.handler
+      Runtime: nodejs8.10
+      Timeout: 180
+      Environment:
+        Variables:
+          TEST_URL: 'https://exsample.com/'
+          WEBHOOK_URL: 'https://hooks.slack.com/services/XXX/XXX/XXX'
