@@ -41,6 +41,39 @@ const postToSlack = (message) => {
   req.end();
 }
 
+// Googleスプレッドシートに追記
+const {google} = require('googleapis')
+const SCOPES = ['https://www.googleapis.com/auth/spreadsheets']
+
+async function appendData(message1,message2) {
+  const auth = await google.auth.getClient({
+    // Scopes can be specified either as an array or as a single, space-delimited string.
+    scopes: SCOPES
+  })
+ 
+  const sheets = google.sheets({version: 'v4', auth: auth})
+  const res = await sheets.spreadsheets.values.append({
+    spreadsheetId: process.env.SPREADSHEET_ID,
+    range: "A1:B1",
+    valueInputOption: "USER_ENTERED",
+    resource: {
+      values: [
+        [
+          new Date().toISOString().replace(/T/, ' ').replace(/\..+/, ''),
+          message1,
+          message2
+        ]
+      ]
+    }
+  }).catch((err) => {
+    console.log('The API returned an error: ' + err)
+    throw err
+  })
+ 
+  console.log("Successed")
+  console.log("Status: " + res.status)
+}
+
 exports.handler = async (event, context, callback) => {
   try {
     console.log('start crawl: ' + testUrl);
@@ -74,6 +107,7 @@ exports.handler = async (event, context, callback) => {
     console.log('end crawl');
     console.log(scrapingData);
     postToSlack('*本日のPagespeed Insightsスコア*\n> モバイル *' + scrapingData[0] + '*\n> パソコン *'  + scrapingData[1] + '*');
+    appendData(scrapingData[0],scrapingData[1]);
 
     await browser.close();
     return callback(null, JSON.stringify({ result: 'OK' }));

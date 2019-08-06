@@ -12,3 +12,5 @@ Resources:
         Variables:
           TEST_URL: 'https://exsample.com/'
           WEBHOOK_URL: 'https://hooks.slack.com/services/XXX/XXX/XXX'
+          GOOGLE_APPLICATION_CREDENTIALS: secrets.json
+          SPREADSHEET_ID: 'YOUR_SHEET_ID'
