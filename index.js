@@ -106,8 +106,14 @@ exports.handler = async (event, context, callback) => {
     // 結果出力
     console.log('end crawl');
     console.log(scrapingData);
-    postToSlack('*本日のPagespeed Insightsスコア*\n> モバイル *' + scrapingData[0] + '*\n> パソコン *'  + scrapingData[1] + '*');
+
     appendData(scrapingData[0],scrapingData[1]);
+
+    const slackMessage = '*本日のPagespeed Insightsスコア*\n' +
+      '測定対象URL: `' + process.env.TEST_URL + '` \n' +
+      '> モバイル *' + scrapingData[0] + '*\n' +
+      '> パソコン *' + scrapingData[1] + '*';
+    postToSlack(slackMessage);
 
     await browser.close();
     return callback(null, JSON.stringify({ result: 'OK' }));
